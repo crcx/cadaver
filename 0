@@ -5,18 +5,18 @@
 
 [ 'http://api.forthworks.com/cadaver/0' ] 'BASE-HREF' define
 
-'*Post' value
+"-----------------------------------------------------------------------------"
+
+"Support Functions"
+[ '*Post'  '*I' ] values
 
 [ "n-s"  :s dup length? 2 - 0 swap subslice :s ] 'strip-suffix' define
-
-"-----------------------------------------------------------------------------"
-[ "-n"   'mostRecent' slurp-file dup length? 0 swap subslice :s :n ] 'newest-post' define
 [ "n-s"  :s 'cache/' swap + strip-suffix '.html' + ] 'get-filename' define
+[ "-n"   'mostRecent' slurp-file dup length? 0 swap subslice :s :n ] 'newest-post' define
 
-"-----------------------------------------------------------------------------"
 [ "n-ns" \
-  [ '<p><a href="' BASE-HREF + over strip-suffix '/' swap '"><b>Post #' over '</b></a></p>' ] \
-  build-string \
+  dup strip-suffix to *I \
+  [ '<p><a href="' BASE-HREF $/ *I '">Post #' *I '</a></p>' ] build-string \
 ] 'permalink' define
 
 [ "n-" \
@@ -25,17 +25,32 @@
   '<hr>' println \
 ] 'display-post' define
 
+"-----------------------------------------------------------------------------"
 
-[ newest-post dup to *Post 3 min [ *Post display-post *Post 1 - to *Post ] times ] '/recent' define
-[ PATH_INFO rest :s :n display-post ] '/permalink' define
+"Handlers for various Paths"
+[ "-" \
+  newest-post to *Post \
+  *Post 3 min [ *Post display-post *Post 1 - to *Post ] times \
+] '/recent' define
 
+[ "-" \
+  PATH_INFO rest :s :n display-post \
+] '/permalink' define
 
+[ "-" \
+  "TODO: 404 Error page" \
+] '/404' define
 
 "-----------------------------------------------------------------------------"
+
+"Generate the page"
+
 'text/html' content-type
 'header.html' slurp-file println
 
 [ [ [ PATH_INFO '(no)' = ] [ /recent ] ] \
+  [ [ PATH_INFO '/404' = ] [ /404 ] ] \
+  [ [ PATH_INFO '/'    = ] [ /404 ] ] \
   [ [ PATH_INFO @ $/   = ] [ /permalink ] ] \
   [ [ true ] [ 'error!' ] ] \
 ] when
