@@ -48,10 +48,10 @@
 'text/html' content-type
 'header.html' slurp-file println
 
-[ [ [ PATH_INFO '(no)' = ] [ /recent ] ] \
-  [ [ PATH_INFO '/404' = ] [ /404 ] ] \
-  [ [ PATH_INFO '/'    = ] [ /404 ] ] \
-  [ [ PATH_INFO @ $/   = ] [ /permalink ] ] \
+[ [ [        -path? ] [ /recent ] ] \
+  [ [ '/404'  path? ] [ /404 ] ] \
+  [ [ '/'     path? ] [ /404 ] ] \
+  [ [ PATH_INFO @ $/  = ] [ /permalink ] ] \
   [ [ true ] [ 'error!' ] ] \
 ] when
 
