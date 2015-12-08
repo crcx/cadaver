@@ -1,0 +1,43 @@
+#!/home/crc/local/bin/cyanide
+
+"Cadaver: A Weblog Engine in Parable"
+"-----------------------------------------------------------------------------"
+
+[ 'http://api.forthworks.com/cadaver/0' ] 'BASE-HREF' define
+
+'*Post' value
+
+[ "n-s"  :s dup length? 2 - 0 swap subslice :s ] 'strip-suffix' define
+
+"-----------------------------------------------------------------------------"
+[ "-n"   'mostRecent' slurp-file dup length? 0 swap subslice :s :n ] 'newest-post' define
+[ "n-s"  :s 'cache/' swap + strip-suffix '.html' + ] 'get-filename' define
+
+"-----------------------------------------------------------------------------"
+[ "n-ns" \
+  [ '<p><a href="' BASE-HREF + over strip-suffix '/' swap '"><b>Post #' over '</b></a></p>' ] \
+  build-string \
+] 'permalink' define
+
+[ "n-" \
+  permalink println \
+  get-filename slurp-file println \
+  '<hr>' println \
+] 'display-post' define
+
+
+[ newest-post dup to *Post 3 min [ *Post display-post *Post 1 - to *Post ] times ] '/recent' define
+[ PATH_INFO rest :s :n display-post ] '/permalink' define
+
+
+
+"-----------------------------------------------------------------------------"
+'text/html' content-type
+'header.html' slurp-file println
+
+[ [ [ PATH_INFO '(no)' = ] [ /recent ] ] \
+  [ [ PATH_INFO @ $/   = ] [ /permalink ] ] \
+  [ [ true ] [ 'error!' ] ] \
+] when
+
+'footer.html' slurp-file println
