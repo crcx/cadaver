@@ -1,0 +1,3 @@
+AddHandler cgi-script .cgi .py .p index cadaver 0
+Options +FollowSymLinks +ExecCGI
+DirectoryIndex 0
