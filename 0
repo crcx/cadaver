@@ -51,7 +51,7 @@
 [ [ [        -path? ] [ /recent ] ] \
   [ [ '/404'  path? ] [ /404 ] ] \
   [ [ '/'     path? ] [ /404 ] ] \
-  [ [ PATH_INFO @ $/  = ] [ /permalink ] ] \
+  [ [ PATH_INFO @ $/  eq? ] [ /permalink ] ] \
   [ [ true ] [ 'error!' ] ] \
 ] when
 
