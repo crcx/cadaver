@@ -7,39 +7,39 @@
 
 "-----------------------------------------------------------------------------"
 
-"Support Functions"
-[ '*Post'  '*I' ] values
+[ '*Post'  '*I' ] {
 
-[ "n-s"  :s dup length? 2 - 0 swap subslice :s ] 'strip-suffix' define
-[ "n-s"  :s 'cache/' swap + strip-suffix '.html' + ] 'get-filename' define
-[ "-n"   'mostRecent' slurp-file dup length? 0 swap subslice :s :n ] 'newest-post' define
+  [ "n-s"  :s dup length? 2 - 0 swap subslice :s ] 'strip-suffix' define
+  [ "n-s"  :s 'cache/' swap + strip-suffix '.html' + ] 'get-filename' define
+  [ "-n"   'mostRecent' slurp-file dup length? 0 swap subslice :s :n ] 'newest-post' define
 
-[ "n-ns" \
-  dup strip-suffix to *I \
-  [ '<p><a href="' BASE-HREF $/ *I '">Post #' *I '</a></p>' ] build-string \
-] 'permalink' define
+  [ "n-ns" \
+    dup strip-suffix to *I \
+    [ '<p><a href="' BASE-HREF $/ *I '">Post #' *I '</a></p>' ] build-string \
+  ] 'permalink' define
 
-[ "n-" \
-  permalink println \
-  get-filename slurp-file println \
-  '<hr>' println \
-] 'display-post' define
+  [ "n-" \
+    permalink println \
+    get-filename slurp-file println \
+    '<hr>' println \
+  ] 'display-post' define
 
 "-----------------------------------------------------------------------------"
 
 "Handlers for various Paths"
-[ "-" \
-  newest-post to *Post \
-  *Post 3 min [ *Post display-post *Post 1 - to *Post ] times \
-] '/recent' define
+  [ "-" \
+    newest-post to *Post \
+    *Post 3 min [ *Post display-post *Post 1 - to *Post ] times \
+  ] '/recent' define
 
-[ "-" \
-  PATH_INFO rest :s :n display-post \
-] '/permalink' define
+  [ "-" \
+    PATH_INFO rest :s :n display-post \
+  ] '/permalink' define
 
-[ "-" \
-  "TODO: 404 Error page" \
-] '/404' define
+  [ "-" \
+    "TODO: 404 Error page" \
+  ] '/404' define
+}
 
 "-----------------------------------------------------------------------------"
 
