@@ -15,13 +15,12 @@
 
   [ "n-s" \
     strip-suffix to *I \
-    [ '<p><a href="' BASE-HREF $/ *I '">Post #' *I '</a></p>' ] build-string \
+    [ '<h3><a href="' BASE-HREF $/ *I '">Post #' *I '</a></h3>' ] build-string \
   ] 'permalink' define
 
   [ "n-" \
     [ permalink ] sip \
     get-filename slurp-file \
-    '<hr>' \
   ] 'display-post' define
 
 "-----------------------------------------------------------------------------"
@@ -36,7 +35,7 @@
           [ 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css' ] stylesheet \
           '<meta name="viewport" content="width=device-width, initial-scale=1">' \
         ] head \
-        [ '<div class="container">' *Renderer invoke '</div>' ] body \
+        [ '<div class="container">' *Renderer invoke '<hr><p>&copy; 2015, Charles Childers</p></div>' ] body \
       ] html \
     ] build-string println \
   ] 'display-page' define
@@ -45,12 +44,13 @@
 "-----------------------------------------------------------------------------"
 
 "Handlers for various Paths"
-  [ "-" \
+  [ "-..." \
+    [ 'The most recent posts are...' ] h1 \
     newest-post to *Post \
-    *Post 3 min [ *Post display-post *Post 1 - to *Post ] times \
+    *Post 3 min [ '<hr>' *Post display-post *Post 1 - to *Post ] times \
   ] '/recent' define
 
-  [ "-" \
+  [ "-..." \
     PATH_INFO rest :s :n display-post \
   ] '/permalink' define
 
