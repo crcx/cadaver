@@ -13,16 +13,34 @@
   [ "n-s"  :s 'cache/' swap + strip-suffix '.html' + ] 'get-filename' define
   [ "-n"   'mostRecent' slurp-file dup length? 0 swap subslice :s :n ] 'newest-post' define
 
-  [ "n-ns" \
-    dup strip-suffix to *I \
+  [ "n-s" \
+    strip-suffix to *I \
     [ '<p><a href="' BASE-HREF $/ *I '">Post #' *I '</a></p>' ] build-string \
   ] 'permalink' define
 
   [ "n-" \
-    permalink println \
-    get-filename slurp-file println \
-    '<hr>' println \
+    [ permalink ] sip \
+    get-filename slurp-file \
+    '<hr>' \
   ] 'display-post' define
+
+"-----------------------------------------------------------------------------"
+[ '*Renderer' ] {
+  [ "q-" \
+    to *Renderer \
+    'text/html' content-type \
+    [ '<!DOCTYPE html>' \
+      [ \
+        [ \
+          [ 'Cadaver: a Weblog' ] title \
+          [ 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css' ] stylesheet \
+          '<meta name="viewport" content="width=device-width, initial-scale=1">' \
+        ] head \
+        [ '<div class="container">' *Renderer invoke '</div>' ] body \
+      ] html \
+    ] build-string println \
+  ] 'display-page' define
+}
 
 "-----------------------------------------------------------------------------"
 
@@ -45,14 +63,14 @@
 
 "Generate the page"
 
-'text/html' content-type
-'header.html' slurp-file println
+[ "-" \
+  [ [ [        -path? ] [ /recent ] ] \
+    [ [ '/404'  path? ] [ /404 ] ] \
+    [ [ '/'     path? ] [ /404 ] ] \
+    [ [ PATH_INFO @ $/  eq? ] [ /permalink ] ] \
+    [ [ true ] [ 'error!' ] ] \
+  ] when \
+] 'handle-request' define
 
-[ [ [        -path? ] [ /recent ] ] \
-  [ [ '/404'  path? ] [ /404 ] ] \
-  [ [ '/'     path? ] [ /404 ] ] \
-  [ [ PATH_INFO @ $/  eq? ] [ /permalink ] ] \
-  [ [ true ] [ 'error!' ] ] \
-] when
 
-'footer.html' slurp-file println
+[ handle-request ] display-page
